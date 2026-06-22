@@ -69,6 +69,27 @@ export function Book() {
     document.body.appendChild(script);
   }, []);
 
+  useEffect(() => {
+    const pending = localStorage.getItem('pending_booking');
+    const params = new URLSearchParams(window.location.search);
+
+    // Razorpay appends these on redirect
+    const paymentId = params.get('razorpay_payment_id');
+    const signature = params.get('razorpay_signature');
+    const orderId = params.get('razorpay_order_id');
+
+    if (pending && paymentId && signature && orderId) {
+      const { bookingId } = JSON.parse(pending);
+      localStorage.removeItem('pending_booking');
+
+      verifyPayment(paymentId, orderId, signature, bookingId)
+        .then(result => {
+          if (result.success) setIsSuccess(true);
+          else setPaymentError(result.error);
+        });
+    }
+  }, []);
+
   const selectedService = services.find(s => s.title === formData.consultationType);
 
   const validateForm = () => {
@@ -188,21 +209,19 @@ export function Book() {
         name: 'AstroVedic Consultation',
         description: `${selectedService.title} - ${selectedService.duration}`,
         order_id: orderData.order_id,
+
         handler: async (response) => {
           try {
             setIsSubmitting(true);
+            localStorage.removeItem('pending_booking'); // cleanup
             const result = await verifyPayment(
               response.razorpay_payment_id,
               response.razorpay_order_id,
               response.razorpay_signature,
               bookingData.id
             );
-
-            if (result.success) {
-              setIsSuccess(true);
-            } else {
-              setPaymentError(result.error || 'Payment verification failed');
-            }
+            if (result.success) setIsSuccess(true);
+            else setPaymentError(result.error || 'Payment verification failed');
           } catch (err) {
             setPaymentError('Payment verification failed. Please contact support.');
           } finally {
@@ -224,6 +243,11 @@ export function Book() {
           },
         },
       };
+      // Before rzp.open()
+      localStorage.setItem('pending_booking', JSON.stringify({
+        bookingId: bookingData.id,
+        orderId: orderData.order_id,
+      }));
 
       const rzp = new window.Razorpay(options);
       rzp.open();

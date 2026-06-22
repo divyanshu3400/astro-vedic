@@ -134,7 +134,20 @@ Deno.serve(async (req: Request) => {
 
     // ─── VERIFY PAYMENT ──────────────────────────────────────────────────────
     if (req.method === "POST" && action === "verify-payment") {
-      const data: VerifyPaymentRequest = await req.json();
+      let data: VerifyPaymentRequest;
+      const contentType = req.headers.get('content-type') || '';
+      if (contentType.includes('application/x-www-form-urlencoded')) {
+        const text = await req.text();
+        const params = new URLSearchParams(text);
+        data = {
+          razorpay_order_id: params.get('razorpay_order_id') ?? '',
+          razorpay_payment_id: params.get('razorpay_payment_id') ?? '',
+          razorpay_signature: params.get('razorpay_signature') ?? '',
+          bookingId: new URL(req.url).searchParams.get('bookingId') ?? '',
+        };
+      } else {
+        data = await req.json();
+      }
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId } = data;
 
       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !bookingId) {
