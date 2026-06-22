@@ -1,4 +1,4 @@
-/// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,11 +18,9 @@ interface RazorpayOrderResponse {
   created_at: number;
 }
 
-interface PaymentVerificationRequest {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-  bookingId: string;
+interface CreateOrderRequest {
+  serviceId: string;
+  receipt?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -31,31 +29,77 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const RAZORPAY_KEY_ID = Deno.env.get("RAZORPAY_KEY_ID")!;
-    const RAZORPAY_KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET")!;
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const RAZORPAY_KEY_ID = Deno.env.get("RAZORPAY_KEY_ID");
+    const RAZORPAY_KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+      console.error("Missing Razorpay credentials");
       throw new Error("Razorpay credentials not configured");
+    }
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      console.error("Missing Supabase credentials");
+      throw new Error("Supabase credentials not configured");
     }
 
     const url = new URL(req.url);
     const action = url.searchParams.get("action");
 
     if (req.method === "POST" && action === "create-order") {
-      const { amount, receipt } = await req.json();
+      const body: CreateOrderRequest = await req.json();
+      const { serviceId, receipt } = body;
+
+      if (!serviceId) {
+        throw new Error("Service ID is required");
+      }
+
+      console.log("Fetching service with ID:", serviceId);
+
+      // Fetch the actual price from database - prevents price tampering
+      const serviceUrl = `${SUPABASE_URL}/rest/v1/services?id=eq.${encodeURIComponent(serviceId)}&select=price_amount,currency,title`;
+      console.log("Fetching URL:", serviceUrl);
+
+      const serviceResponse = await fetch(serviceUrl, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          "apikey": SUPABASE_SERVICE_ROLE_KEY,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Service response status:", serviceResponse.status);
+
+      if (!serviceResponse.ok) {
+        const errorText = await serviceResponse.text();
+        console.error("Failed to fetch service:", serviceResponse.status, errorText);
+        throw new Error(`Failed to fetch service details (${serviceResponse.status}): ${errorText}`);
+      }
+
+      const services = await serviceResponse.json();
+      console.log("Services response:", JSON.stringify(services));
+
+      if (!services || services.length === 0) {
+        throw new Error(`Service not found: ${serviceId}`);
+      }
+
+      const service = services[0];
+      const amountInPaise = service.price_amount * 100;
+
+      console.log("Creating order for amount:", amountInPaise, "paise");
 
       const orderData = {
-        amount: amount * 100,
-        currency: "INR",
+        amount: amountInPaise,
+        currency: service.currency || "INR",
         receipt: receipt || `receipt_${Date.now()}`,
         payment_capture: 1,
       };
 
       const auth = btoa(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`);
 
-      const response = await fetch("https://api.razorpay.com/v1/orders", {
+      const razorpayResponse = await fetch("https://api.razorpay.com/v1/orders", {
         method: "POST",
         headers: {
           "Authorization": `Basic ${auth}`,
@@ -64,12 +108,14 @@ Deno.serve(async (req: Request) => {
         body: JSON.stringify(orderData),
       });
 
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Failed to create order: ${error}`);
+      if (!razorpayResponse.ok) {
+        const error = await razorpayResponse.text();
+        console.error("Razorpay order creation failed:", error);
+        throw new Error(`Failed to create Razorpay order: ${error}`);
       }
 
-      const order: RazorpayOrderResponse = await response.json();
+      const order: RazorpayOrderResponse = await razorpayResponse.json();
+      console.log("Order created successfully:", order.id);
 
       return new Response(JSON.stringify({
         success: true,
@@ -77,14 +123,20 @@ Deno.serve(async (req: Request) => {
         amount: order.amount,
         currency: order.currency,
         key_id: RAZORPAY_KEY_ID,
+        service_id: serviceId,
+        service_title: service.title,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (req.method === "POST" && action === "verify-payment") {
-      const data: PaymentVerificationRequest = await req.json();
+      const data = await req.json();
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId } = data;
+
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !bookingId) {
+        throw new Error("Missing required payment verification fields");
+      }
 
       const body = `${razorpay_order_id}|${razorpay_payment_id}`;
       const encoder = new TextEncoder();
@@ -100,16 +152,13 @@ Deno.serve(async (req: Request) => {
       );
 
       const signature = await crypto.subtle.sign("HMAC", key, msgData);
-
-      // ✅ Correct: hex encoding (Razorpay uses hex, not base64)
-      const expectedSignature = Array.from(new Uint8Array(signature))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
+      const expectedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)));
 
       if (expectedSignature !== razorpay_signature) {
+        console.error("Invalid signature");
         return new Response(JSON.stringify({
           success: false,
-          error: "Invalid signature",
+          error: "Invalid signature. Payment verification failed.",
         }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -121,7 +170,8 @@ Deno.serve(async (req: Request) => {
         {
           method: "PATCH",
           headers: {
-            "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`,
+            "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            "apikey": SUPABASE_SERVICE_ROLE_KEY,
             "Content-Type": "application/json",
             "Prefer": "return=representation",
           },
@@ -129,13 +179,18 @@ Deno.serve(async (req: Request) => {
             payment_id: razorpay_payment_id,
             payment_status: "paid",
             order_id: razorpay_order_id,
+            updated_at: new Date().toISOString(),
           }),
         }
       );
 
       if (!updateResponse.ok) {
-        throw new Error("Failed to update booking");
+        const errorText = await updateResponse.text();
+        console.error("Failed to update booking:", errorText);
+        throw new Error("Failed to update booking status");
       }
+
+      console.log("Payment verified and booking updated:", bookingId);
 
       return new Response(JSON.stringify({
         success: true,
@@ -151,12 +206,10 @@ Deno.serve(async (req: Request) => {
     });
 
   } catch (error) {
-    // ✅ Fix 3: narrow 'unknown' error type
-    const message = error instanceof Error ? error.message : String(error);
-    console.error("Error:", message);
+    console.error("Edge function error:", error);
     return new Response(JSON.stringify({
       success: false,
-      error: message,
+      error: error.message || "An unexpected error occurred",
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
