@@ -5,7 +5,7 @@ import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Textarea } from '../components/Textarea';
 import { services } from '../data/services';
-import { supabase } from '../lib/supabase';
+import { supabase, supabaseAnonKey, supabaseUrl } from '../lib/supabase';
 
 declare global {
   interface Window {
@@ -94,12 +94,12 @@ export function Book() {
 
   const createOrder = async () => {
     const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=create-order`,
+      `${supabaseUrl}/functions/v1/verify-payment?action=create-order`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Authorization': `Bearer ${supabaseAnonKey}`,
         },
         body: JSON.stringify({
           amount: priceAmount,
@@ -122,12 +122,12 @@ export function Book() {
     bookingId: string
   ) => {
     const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=verify-payment`,
+      `${supabaseUrl}/functions/v1/verify-payment?action=verify-payment`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Authorization': `Bearer ${supabaseAnonKey}`,
         },
         body: JSON.stringify({
           razorpay_order_id: orderId,

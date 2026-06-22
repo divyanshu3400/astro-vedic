@@ -1,4 +1,4 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+/// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -100,7 +100,11 @@ Deno.serve(async (req: Request) => {
       );
 
       const signature = await crypto.subtle.sign("HMAC", key, msgData);
-      const expectedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)));
+
+      // ✅ Correct: hex encoding (Razorpay uses hex, not base64)
+      const expectedSignature = Array.from(new Uint8Array(signature))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
 
       if (expectedSignature !== razorpay_signature) {
         return new Response(JSON.stringify({
@@ -147,10 +151,12 @@ Deno.serve(async (req: Request) => {
     });
 
   } catch (error) {
-    console.error("Error:", error);
+    // ✅ Fix 3: narrow 'unknown' error type
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Error:", message);
     return new Response(JSON.stringify({
       success: false,
-      error: error.message,
+      error: message,
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
