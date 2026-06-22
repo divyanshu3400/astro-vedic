@@ -1,10 +1,42 @@
 import { motion } from 'framer-motion';
-import { BookOpen, Calendar, Star, Target, Trophy } from 'lucide-react';
+import { BookOpen, Calendar, Star, Target, Trophy, AlertCircle } from 'lucide-react';
 import { SectionTitle } from '../components/SectionTitle';
 import { Card } from '../components/Card';
-import { astrologer } from '../data/astrologer';
+import { Loading } from '../components/Loading';
+import { useAstrologerProfile } from '../hooks/useDynamicData';
 
 export function About() {
+  const { profile, loading, error } = useAstrologerProfile();
+
+  const timeline = [
+    { year: '1998', title: 'Started Astrological Journey', description: 'Began formal education in Vedic astrology under renowned guru Pandit Ramesh Chandra.' },
+    { year: '2002', title: 'Gold Medal in M.A. Astrology', description: 'Achieved gold medal in Masters degree from Sampurnanand Sanskrit University, Varanasi.' },
+    { year: '2005', title: 'Established Practice', description: 'Started professional astrology practice in Delhi, serving clients from all walks of life.' },
+    { year: '2010', title: 'Published First Book', description: 'Released "Kundli Vigyan" - a comprehensive guide to birth chart analysis.' },
+    { year: '2015', title: 'International Recognition', description: 'Expanded services globally through online consultations, reaching clients in 30+ countries.' },
+    { year: '2020', title: 'Digital Transformation', description: 'Launched online Puja services and video consultations, making astrology accessible worldwide.' },
+    { year: '2024', title: '25 Years of Service', description: 'Celebrated 25 years of guiding souls, with over 50,000 successful consultations.' }
+  ];
+
+  if (loading) {
+    return (
+      <div className="pt-24 min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="pt-24 min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">{error || 'Failed to load profile'}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-24 min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="relative py-20 bg-gradient-to-b from-deep-blue to-deep-blue-dark text-white">
@@ -33,8 +65,8 @@ export function About() {
             >
               <div className="absolute -inset-4 bg-gradient-to-r from-saffron to-gold rounded-3xl blur-2xl opacity-20" />
               <img
-                src={astrologer.image}
-                alt={astrologer.name}
+                src={profile.image}
+                alt={profile.name}
                 className="relative w-full rounded-3xl shadow-2xl object-cover aspect-[4/5]"
               />
               <div className="absolute -bottom-6 -right-6 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl">
@@ -43,7 +75,7 @@ export function About() {
                     <Star className="w-6 h-6 text-deep-blue" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-saffron">{astrologer.experience}</p>
+                    <p className="text-2xl font-bold text-saffron">{profile.experience}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Experience</p>
                   </div>
                 </div>
@@ -56,17 +88,17 @@ export function About() {
               viewport={{ once: true }}
             >
               <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">
-                {astrologer.name}
+                {profile.name}
               </h2>
-              <p className="text-saffron font-medium mb-6">{astrologer.title}</p>
+              <p className="text-saffron font-medium mb-6">{profile.title}</p>
               <p className="text-gray-600 dark:text-gray-400 mb-6 text-lg">
-                {astrologer.mission}
+                {profile.mission}
               </p>
 
               <div className="mb-6">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Specializations</h3>
                 <div className="flex flex-wrap gap-2">
-                  {astrologer.specializations.map(spec => (
+                  {profile.specializations.map(spec => (
                     <span
                       key={spec}
                       className="px-3 py-1 bg-saffron/10 text-saffron rounded-full text-sm"
@@ -103,7 +135,7 @@ export function About() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {astrologer.achievements.map((achievement, index) => (
+            {profile.achievements.map((achievement, index) => (
               <motion.div
                 key={achievement}
                 initial={{ opacity: 0, y: 20 }}
@@ -130,7 +162,7 @@ export function About() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {astrologer.certifications.map((cert, index) => (
+            {profile.certifications.map((cert, index) => (
               <motion.div
                 key={cert}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
@@ -158,16 +190,15 @@ export function About() {
           <div className="relative">
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-saffron to-gold" />
 
-            {astrologer.timeline.map((item, index) => (
+            {timeline.map((item, index) => (
               <motion.div
                 key={item.year}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative flex items-center gap-8 mb-12 ${
-                  index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                }`}
+                className={`relative flex items-center gap-8 mb-12 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
+                  }`}
               >
                 <div className={`flex-1 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
                   <Card hover={false} className="inline-block text-left">
@@ -206,7 +237,7 @@ export function About() {
               Our Mission
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-              {astrologer.mission}
+              {profile.mission}
             </p>
           </motion.div>
         </div>

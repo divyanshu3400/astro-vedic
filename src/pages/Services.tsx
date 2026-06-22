@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
-import { Search, ListFilter as Filter } from 'lucide-react';
+import { Search, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { ServiceCard } from '../components/ServiceCard';
-import { services } from '../data/services';
-
-const categories = ['All', 'Kundli', 'Marriage', 'Career', 'Business', 'Spiritual', 'Remedies'];
+import { Loading } from '../components/Loading';
+import { useServices } from '../hooks/useDynamicData';
 
 export function Services() {
+  const { services, loading, error } = useServices();
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const filteredServices = services.filter(service => {
     const matchesSearch = service.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -46,37 +45,33 @@ export function Services() {
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-saffron"
               />
             </div>
+          </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <Filter className="w-5 h-5 text-gray-500" />
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm transition-colors ${
-                    selectedCategory === category
-                      ? 'bg-saffron text-deep-blue'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-saffron/10'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loading />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredServices.map((service, index) => (
-              <ServiceCard key={service.id} service={service} index={index} />
-            ))}
-          </div>
-
-          {filteredServices.length === 0 && (
+          ) : error ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">
-                No services found matching your search.
-              </p>
+              <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 text-lg">{error}</p>
             </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredServices.map((service, index) => (
+                  <ServiceCard key={service.id} service={service} index={index} />
+                ))}
+              </div>
+
+              {filteredServices.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400 text-lg">
+                    No services found matching your search.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, ListFilter as Filter, ArrowLeft, Clock, User } from 'lucide-react';
+import { Search, ArrowLeft, Clock, User, AlertCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { BlogCard } from '../components/BlogCard';
-import { blogs } from '../data/blogs';
 import { Modal } from '../components/Modal';
+import { Loading } from '../components/Loading';
+import { useBlogs } from '../hooks/useDynamicData';
 import type { BlogPost } from '../types';
 import { formatDate } from '../utils/helpers';
 
-const categories = ['All', 'Vedic Astrology', 'Planetary Science', 'Marriage', 'Spiritual', 'Gemstones', 'Vastu', 'Numerology'];
-
 export function Blog() {
+  const { blogs, loading, error } = useBlogs();
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
   const blogsPerPage = 6;
@@ -20,8 +19,7 @@ export function Blog() {
   const filteredBlogs = blogs.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(search.toLowerCase()) ||
       blog.excerpt.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || blog.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
 
   const paginatedBlogs = filteredBlogs.slice(
@@ -64,76 +62,68 @@ export function Blog() {
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-saffron"
               />
             </div>
+          </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <Filter className="w-5 h-5 text-gray-500" />
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => {
-                    setSelectedCategory(category);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-4 py-2 rounded-full text-sm transition-colors ${
-                    selectedCategory === category
-                      ? 'bg-saffron text-deep-blue'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-saffron/10'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loading />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {paginatedBlogs.map((blog, index) => (
-              <div key={blog.id} onClick={() => setSelectedBlog(blog)} className="cursor-pointer">
-                <BlogCard blog={blog} index={index} />
-              </div>
-            ))}
-          </div>
-
-          {filteredBlogs.length === 0 && (
+          ) : error ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400 text-lg">
-                No articles found matching your search.
-              </p>
+              <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 text-lg">{error}</p>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {paginatedBlogs.map((blog, index) => (
+                  <div key={blog.id} onClick={() => setSelectedBlog(blog)} className="cursor-pointer">
+                    <BlogCard blog={blog} index={index} />
+                  </div>
+                ))}
+              </div>
 
-          {totalPages > 1 && (
-            <div className="flex justify-center gap-2 mt-12">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-lg transition-colors ${
-                    currentPage === page
-                      ? 'bg-saffron text-deep-blue'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-saffron/10'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
+              {filteredBlogs.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400 text-lg">
+                    No articles found matching your search.
+                  </p>
+                </div>
+              )}
+
+              {totalPages > 1 && (
+                <div className="flex justify-center gap-2 mt-12">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-10 h-10 rounded-lg transition-colors ${currentPage === page
+                          ? 'bg-saffron text-deep-blue'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-saffron/10'
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

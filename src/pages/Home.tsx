@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, Sparkles, Calendar, Moon as MoonIcon } from 'lucide-react';
+import { ArrowRight, Star, Sparkles, Calendar, Moon as MoonIcon, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { SectionTitle } from '../components/SectionTitle';
@@ -7,14 +7,33 @@ import { ServiceCard } from '../components/ServiceCard';
 import { TestimonialCard } from '../components/TestimonialCard';
 import { BlogCard } from '../components/BlogCard';
 import StarField from '../components/StarField';
-import { services } from '../data/services';
-import { testimonials } from '../data/testimonials';
-import { blogs } from '../data/blogs';
-import { zodiacSigns, dailyHoroscopes } from '../data/zodiac';
-import { todayPanchang, festivals } from '../data/panchang';
+import { Loading } from '../components/Loading';
+import {
+  useServices,
+  useTestimonials,
+  useBlogs,
+  useZodiacSigns,
+  useDailyHoroscopes,
+  useFestivals
+} from '../hooks/useDynamicData';
 
 export function Home() {
   const navigate = useNavigate();
+  const { services, loading: servicesLoading } = useServices();
+  const { testimonials, loading: testimonialsLoading } = useTestimonials();
+  const { blogs, loading: blogsLoading } = useBlogs();
+  const { signs: zodiacSigns, loading: zodiacLoading } = useZodiacSigns();
+  const { horoscopes: dailyHoroscopes, loading: horoscopesLoading } = useDailyHoroscopes();
+  const { festivals, loading: festivalsLoading } = useFestivals();
+
+  const todayPanchang = {
+    tithi: 'Shukla Paksha, Dashami',
+    nakshatra: 'Hasta',
+    yoga: 'Siddhi',
+    moonPhase: 'Waxing Gibbous'
+  };
+
+  const isLoading = servicesLoading || testimonialsLoading || blogsLoading || zodiacLoading || horoscopesLoading || festivalsLoading;
 
   return (
     <div className="overflow-hidden">
@@ -124,200 +143,247 @@ export function Home() {
         </motion.div>
       </section>
 
-      <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4">
-          <SectionTitle
-            title="Our Premium Services"
-            subtitle="Discover our comprehensive range of Vedic astrology services designed to guide you towards success, happiness, and spiritual enlightenment."
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.slice(0, 6).map((service, index) => (
-              <ServiceCard key={service.id} service={service} index={index} />
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Button variant="primary" onClick={() => navigate('/services')}>
-              View All Services
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </div>
+      {isLoading ? (
+        <div className="py-20 flex items-center justify-center">
+          <Loading />
         </div>
-      </section>
+      ) : (
+        <>
+          <section className="py-20 bg-white dark:bg-gray-900">
+            <div className="max-w-7xl mx-auto px-4">
+              <SectionTitle
+                title="Our Premium Services"
+                subtitle="Discover our comprehensive range of Vedic astrology services designed to guide you towards success, happiness, and spiritual enlightenment."
+              />
 
-      <section className="py-20 bg-gradient-to-br from-saffron/5 to-gold/5 dark:from-saffron/10 dark:to-transparent">
-        <div className="max-w-7xl mx-auto px-4">
-          <SectionTitle
-            title="Today's Panchang"
-            subtitle="Plan your day according to the ancient Vedic almanac"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-saffron/10 rounded-lg">
-                  <Calendar className="w-5 h-5 text-saffron" />
-                </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">Tithi</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {services.slice(0, 6).map((service, index) => (
+                  <ServiceCard key={service.id} service={service} index={index} />
+                ))}
               </div>
-              <p className="text-gray-600 dark:text-gray-400">{todayPanchang.tithi}</p>
-            </motion.div>
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-saffron/10 rounded-lg">
-                  <Star className="w-5 h-5 text-saffron" />
+              {services.length === 0 && (
+                <div className="text-center py-8">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No services available at the moment.</p>
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">Nakshatra</h3>
+              )}
+
+              <div className="text-center mt-12">
+                <Button variant="primary" onClick={() => navigate('/services')}>
+                  View All Services
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
               </div>
-              <p className="text-gray-600 dark:text-gray-400">{todayPanchang.nakshatra}</p>
-            </motion.div>
+            </div>
+          </section>
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-saffron/10 rounded-lg">
-                  <Sparkles className="w-5 h-5 text-saffron" />
-                </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">Yoga</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400">{todayPanchang.yoga}</p>
-            </motion.div>
+          <section className="py-20 bg-gradient-to-br from-saffron/5 to-gold/5 dark:from-saffron/10 dark:to-transparent">
+            <div className="max-w-7xl mx-auto px-4">
+              <SectionTitle
+                title="Today's Panchang"
+                subtitle="Plan your day according to the ancient Vedic almanac"
+              />
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-saffron/10 rounded-lg">
-                  <MoonIcon className="w-5 h-5 text-saffron" />
-                </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">Moon Phase</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400">{todayPanchang.moonPhase}</p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4">
-          <SectionTitle
-            title="Daily Horoscope"
-            subtitle="What do the stars have in store for you today?"
-          />
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {zodiacSigns.map((sign, index) => (
-              <motion.div
-                key={sign.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
-                className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 cursor-pointer group"
-              >
-                <div className="text-center mb-3">
-                  <span className="text-3xl">{sign.symbol}</span>
-                </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white text-center mb-1">
-                  {sign.name}
-                </h3>
-                <p className="text-xs text-gray-500 text-center mb-2">{sign.dateRange}</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 group-hover:line-clamp-none transition-all">
-                  {dailyHoroscopes[sign.id]}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
-        <div className="max-w-7xl mx-auto px-4">
-          <SectionTitle
-            title="Upcoming Festivals"
-            subtitle="Mark your calendars for these auspicious occasions"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {festivals.slice(0, 4).map((festival, index) => (
-              <motion.div
-                key={festival.name}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="flex gap-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md"
-              >
-                <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-saffron to-gold rounded-xl flex items-center justify-center text-deep-blue font-bold">
-                  <div className="text-center">
-                    <div className="text-lg">{festival.date.split(' ')[0]}</div>
-                    <div className="text-xs">{festival.date.split(' ')[1]?.slice(0, 3)}</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-saffron/10 rounded-lg">
+                      <Calendar className="w-5 h-5 text-saffron" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Tithi</h3>
                   </div>
+                  <p className="text-gray-600 dark:text-gray-400">{todayPanchang.tithi}</p>
+                </motion.div>
+
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-saffron/10 rounded-lg">
+                      <Star className="w-5 h-5 text-saffron" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Nakshatra</h3>
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-400">{todayPanchang.nakshatra}</p>
+                </motion.div>
+
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-saffron/10 rounded-lg">
+                      <Sparkles className="w-5 h-5 text-saffron" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Yoga</h3>
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-400">{todayPanchang.yoga}</p>
+                </motion.div>
+
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-saffron/10 rounded-lg">
+                      <MoonIcon className="w-5 h-5 text-saffron" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Moon Phase</h3>
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-400">{todayPanchang.moonPhase}</p>
+                </motion.div>
+              </div>
+            </div>
+          </section>
+
+          <section className="py-20 bg-white dark:bg-gray-900">
+            <div className="max-w-7xl mx-auto px-4">
+              <SectionTitle
+                title="Daily Horoscope"
+                subtitle="What do the stars have in store for you today?"
+              />
+
+              {zodiacSigns.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {zodiacSigns.map((sign, index) => (
+                    <motion.div
+                      key={sign.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.05 }}
+                      whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+                      className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 cursor-pointer group"
+                    >
+                      <div className="text-center mb-3">
+                        <span className="text-3xl">{sign.symbol}</span>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white text-center mb-1">
+                        {sign.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 text-center mb-2">{sign.dateRange}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 group-hover:line-clamp-none transition-all">
+                        {dailyHoroscopes[sign.id] || 'Horoscope not available for today.'}
+                      </p>
+                    </motion.div>
+                  ))}
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{festival.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{festival.description}</p>
+              ) : (
+                <div className="text-center py-8">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">Horoscopes not available at the moment.</p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+              )}
+            </div>
+          </section>
 
-      <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4">
-          <SectionTitle
-            title="What Our Clients Say"
-            subtitle="Real stories from real people whose lives have been transformed by Vedic astrology"
-          />
+          <section className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+            <div className="max-w-7xl mx-auto px-4">
+              <SectionTitle
+                title="Upcoming Festivals"
+                subtitle="Mark your calendars for these auspicious occasions"
+              />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.slice(0, 3).map((testimonial, index) => (
-              <TestimonialCard key={testimonial.id} testimonial={testimonial} index={index} />
-            ))}
-          </div>
+              {festivals.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {festivals.slice(0, 4).map((festival, index) => (
+                    <motion.div
+                      key={festival.name}
+                      initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      className="flex gap-4 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md"
+                    >
+                      <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-saffron to-gold rounded-xl flex items-center justify-center text-deep-blue font-bold">
+                        <div className="text-center">
+                          <div className="text-lg">{festival.festival_date.split(' ')[0]}</div>
+                          <div className="text-xs">{festival.festival_date.split(' ')[1]?.slice(0, 3)}</div>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{festival.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{festival.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No festival information available.</p>
+                </div>
+              )}
+            </div>
+          </section>
 
-          <div className="text-center mt-12">
-            <Button variant="outline" onClick={() => navigate('/testimonials')}>
-              Read More Testimonials
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </section>
+          <section className="py-20 bg-white dark:bg-gray-900">
+            <div className="max-w-7xl mx-auto px-4">
+              <SectionTitle
+                title="What Our Clients Say"
+                subtitle="Real stories from real people whose lives have been transformed by Vedic astrology"
+              />
 
-      <section className="py-20 bg-gradient-to-br from-deep-blue to-deep-blue-dark text-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <SectionTitle
-            title="Latest from Our Blog"
-            subtitle="Explore insightful articles on Vedic astrology, spirituality, and ancient wisdom"
-          />
+              {testimonials.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {testimonials.slice(0, 3).map((testimonial, index) => (
+                      <TestimonialCard key={testimonial.id} testimonial={testimonial} index={index} />
+                    ))}
+                  </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {blogs.slice(0, 4).map((blog, index) => (
-              <BlogCard key={blog.id} blog={blog} index={index} />
-            ))}
-          </div>
+                  <div className="text-center mt-12">
+                    <Button variant="outline" onClick={() => navigate('/testimonials')}>
+                      Read More Testimonials
+                      <ArrowRight className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No testimonials available at the moment.</p>
+                </div>
+              )}
+            </div>
+          </section>
 
-          <div className="text-center mt-12">
-            <Button variant="outline" onClick={() => navigate('/blog')}>
-              View All Articles
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </section>
+          <section className="py-20 bg-gradient-to-br from-deep-blue to-deep-blue-dark text-white">
+            <div className="max-w-7xl mx-auto px-4">
+              <SectionTitle
+                title="Latest from Our Blog"
+                subtitle="Explore insightful articles on Vedic astrology, spirituality, and ancient wisdom"
+              />
+
+              {blogs.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {blogs.slice(0, 4).map((blog, index) => (
+                      <BlogCard key={blog.id} blog={blog} index={index} />
+                    ))}
+                  </div>
+
+                  <div className="text-center mt-12">
+                    <Button variant="outline" onClick={() => navigate('/blog')}>
+                      View All Articles
+                      <ArrowRight className="w-5 h-5" />
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <AlertCircle className="w-12 h-12 text-white/40 mx-auto mb-4" />
+                  <p className="text-white/60">No blog posts available at the moment.</p>
+                </div>
+              )}
+            </div>
+          </section>
+        </>
+      )}
 
       <section className="py-20 bg-gradient-to-r from-saffron to-gold">
         <div className="max-w-4xl mx-auto px-4 text-center">

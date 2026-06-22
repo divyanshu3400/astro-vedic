@@ -4,8 +4,9 @@ import { CircleCheck as CheckCircle, Phone, MessageSquare, CreditCard, AlertCirc
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Textarea } from '../components/Textarea';
-import { services } from '../data/services';
-import { supabase, supabaseAnonKey, supabaseUrl } from '../lib/supabase';
+import { useServices } from '../hooks/useDynamicData';
+import { supabase } from '../lib/supabase';
+import { Loading } from '../components/Loading';
 
 declare global {
   interface Window {
@@ -42,6 +43,7 @@ interface RazorpayOptions {
 }
 
 export function Book() {
+  const { services, loading: servicesLoading, error: servicesError } = useServices();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -68,7 +70,6 @@ export function Book() {
   }, []);
 
   const selectedService = services.find(s => s.title === formData.consultationType);
-  const priceAmount = selectedService ? parseInt(selectedService.price.replace(/[^0-9]/g, '')) : 0;
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -92,24 +93,25 @@ export function Book() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const createOrder = async () => {
+  const createOrder = async (serviceId: string) => {
     const response = await fetch(
-      `${supabaseUrl}/functions/v1/verify-payment?action=create-order`,
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=create-order`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
-          amount: priceAmount,
+          serviceId,
           receipt: `booking_${Date.now()}`,
         }),
       }
     );
 
     if (!response.ok) {
-      throw new Error('Failed to create order');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to create order');
     }
 
     return response.json();
@@ -122,12 +124,12 @@ export function Book() {
     bookingId: string
   ) => {
     const response = await fetch(
-      `${supabaseUrl}/functions/v1/verify-payment?action=verify-payment`,
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=verify-payment`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           razorpay_order_id: orderId,
@@ -145,6 +147,7 @@ export function Book() {
     e.preventDefault();
 
     if (!validateForm()) return;
+    if (!selectedService) return;
 
     setIsSubmitting(true);
     setPaymentError(null);
@@ -162,7 +165,7 @@ export function Book() {
           consultation_type: formData.consultationType,
           preferred_date: formData.preferredDate,
           message: formData.message || null,
-          payment_amount: priceAmount,
+          payment_amount: selectedService.price_amount,
           payment_status: 'pending',
         })
         .select('id')
@@ -171,7 +174,8 @@ export function Book() {
       if (bookingError) throw bookingError;
       if (!bookingData) throw new Error('Failed to create booking');
 
-      const orderData = await createOrder();
+      // Create order with service ID - price fetched securely from database
+      const orderData = await createOrder(selectedService.id);
 
       if (!razorpayLoaded || !window.Razorpay) {
         throw new Error('Payment system not loaded. Please refresh and try again.');
@@ -182,7 +186,7 @@ export function Book() {
         amount: orderData.amount,
         currency: orderData.currency,
         name: 'AstroVedic Consultation',
-        description: `${selectedService?.title} - ${selectedService?.duration}`,
+        description: `${selectedService.title} - ${selectedService.duration}`,
         order_id: orderData.order_id,
         handler: async (response) => {
           try {
@@ -238,6 +242,25 @@ export function Book() {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
+
+  if (servicesLoading) {
+    return (
+      <div className="pt-24 min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (servicesError) {
+    return (
+      <div className="pt-24 min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Failed to load services. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isSuccess) {
     return (
@@ -503,11 +526,11 @@ export function Book() {
                   Contact us directly for immediate assistance
                 </p>
                 <div className="space-y-3">
-                  <a href="tel:+919565901765" className="flex items-center gap-3 text-sm hover:opacity-80">
+                  <a href="tel:+919876543210" className="flex items-center gap-3 text-sm hover:opacity-80">
                     <Phone className="w-4 h-4" />
                     +91 98765 43210
                   </a>
-                  <a href="https://wa.me/919565901765" className="flex items-center gap-3 text-sm hover:opacity-80">
+                  <a href="https://wa.me/919876543210" className="flex items-center gap-3 text-sm hover:opacity-80">
                     <MessageSquare className="w-4 h-4" />
                     WhatsApp Us
                   </a>
