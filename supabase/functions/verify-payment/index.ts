@@ -1,3 +1,5 @@
+// supabase/functions/razorpay/index.ts
+
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const corsHeaders = {
@@ -23,6 +25,13 @@ interface CreateOrderRequest {
   receipt?: string;
 }
 
+interface VerifyPaymentRequest {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  bookingId: string;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -35,18 +44,17 @@ Deno.serve(async (req: Request) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-      console.error("Missing Razorpay credentials");
       throw new Error("Razorpay credentials not configured");
     }
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("Missing Supabase credentials");
       throw new Error("Supabase credentials not configured");
     }
 
     const url = new URL(req.url);
     const action = url.searchParams.get("action");
 
+    // ─── CREATE ORDER ────────────────────────────────────────────────────────
     if (req.method === "POST" && action === "create-order") {
       const body: CreateOrderRequest = await req.json();
       const { serviceId, receipt } = body;
@@ -57,24 +65,20 @@ Deno.serve(async (req: Request) => {
 
       console.log("Fetching service with ID:", serviceId);
 
-      // Fetch the actual price from database - prevents price tampering
-      const serviceUrl = `${SUPABASE_URL}/rest/v1/services?id=eq.${encodeURIComponent(serviceId)}&select=price_amount,currency,title`;
-      console.log("Fetching URL:", serviceUrl);
-
-      const serviceResponse = await fetch(serviceUrl, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-          "apikey": SUPABASE_SERVICE_ROLE_KEY,
-          "Content-Type": "application/json",
-        },
-      });
-
-      console.log("Service response status:", serviceResponse.status);
+      const serviceResponse = await fetch(
+        `${SUPABASE_URL}/rest/v1/services?id=eq.${encodeURIComponent(serviceId)}&select=price_amount,currency,title`,
+        {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            "apikey": SUPABASE_SERVICE_ROLE_KEY,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!serviceResponse.ok) {
         const errorText = await serviceResponse.text();
-        console.error("Failed to fetch service:", serviceResponse.status, errorText);
         throw new Error(`Failed to fetch service details (${serviceResponse.status}): ${errorText}`);
       }
 
@@ -88,14 +92,7 @@ Deno.serve(async (req: Request) => {
       const service = services[0];
       const amountInPaise = service.price_amount * 100;
 
-      console.log("Creating order for amount:", amountInPaise, "paise");
-
-      const orderData = {
-        amount: amountInPaise,
-        currency: service.currency || "INR",
-        receipt: receipt || `receipt_${Date.now()}`,
-        payment_capture: 1,
-      };
+      console.log("Creating Razorpay order for:", amountInPaise, "paise");
 
       const auth = btoa(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`);
 
@@ -105,66 +102,86 @@ Deno.serve(async (req: Request) => {
           "Authorization": `Basic ${auth}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({
+          amount: amountInPaise,
+          currency: service.currency || "INR",
+          receipt: receipt || `receipt_${Date.now()}`,
+          payment_capture: 1,
+        }),
       });
 
       if (!razorpayResponse.ok) {
         const error = await razorpayResponse.text();
-        console.error("Razorpay order creation failed:", error);
         throw new Error(`Failed to create Razorpay order: ${error}`);
       }
 
       const order: RazorpayOrderResponse = await razorpayResponse.json();
-      console.log("Order created successfully:", order.id);
+      console.log("Razorpay order created:", order.id);
 
-      return new Response(JSON.stringify({
-        success: true,
-        order_id: order.id,
-        amount: order.amount,
-        currency: order.currency,
-        key_id: RAZORPAY_KEY_ID,
-        service_id: serviceId,
-        service_title: service.title,
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          order_id: order.id,
+          amount: order.amount,
+          currency: order.currency,
+          key_id: RAZORPAY_KEY_ID,
+          service_id: serviceId,
+          service_title: service.title,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
+    // ─── VERIFY PAYMENT ──────────────────────────────────────────────────────
     if (req.method === "POST" && action === "verify-payment") {
-      const data = await req.json();
+      const data: VerifyPaymentRequest = await req.json();
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId } = data;
 
       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !bookingId) {
         throw new Error("Missing required payment verification fields");
       }
 
-      const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+      // ✅ FIXED: Razorpay signature is hex-encoded HMAC-SHA256, NOT base64
+      const message = `${razorpay_order_id}|${razorpay_payment_id}`;
       const encoder = new TextEncoder();
-      const keyData = encoder.encode(RAZORPAY_KEY_SECRET);
-      const msgData = encoder.encode(body);
 
       const key = await crypto.subtle.importKey(
         "raw",
-        keyData,
+        encoder.encode(RAZORPAY_KEY_SECRET),
         { name: "HMAC", hash: "SHA-256" },
         false,
         ["sign"]
       );
 
-      const signature = await crypto.subtle.sign("HMAC", key, msgData);
-      const expectedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)));
+      const signatureBuffer = await crypto.subtle.sign(
+        "HMAC",
+        key,
+        encoder.encode(message)
+      );
+
+      // Convert buffer → lowercase hex string (matches Razorpay's format)
+      const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+
+      console.log("Expected signature:", expectedSignature);
+      console.log("Received signature:", razorpay_signature);
 
       if (expectedSignature !== razorpay_signature) {
-        console.error("Invalid signature");
-        return new Response(JSON.stringify({
-          success: false,
-          error: "Invalid signature. Payment verification failed.",
-        }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        console.error("Signature mismatch — payment verification failed");
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Invalid signature. Payment verification failed.",
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
       }
 
+      // Signature valid — update booking status in Supabase
       const updateResponse = await fetch(
         `${SUPABASE_URL}/rest/v1/bookings?id=eq.${bookingId}`,
         {
@@ -187,32 +204,40 @@ Deno.serve(async (req: Request) => {
       if (!updateResponse.ok) {
         const errorText = await updateResponse.text();
         console.error("Failed to update booking:", errorText);
-        throw new Error("Failed to update booking status");
+        throw new Error("Payment verified but failed to update booking status");
       }
 
-      console.log("Payment verified and booking updated:", bookingId);
+      console.log("Booking updated successfully:", bookingId);
 
-      return new Response(JSON.stringify({
-        success: true,
-        message: "Payment verified successfully",
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Payment verified successfully",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    return new Response(JSON.stringify({ error: "Invalid action" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // ─── UNKNOWN ACTION ──────────────────────────────────────────────────────
+    return new Response(
+      JSON.stringify({ error: `Unknown action: ${action}` }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
 
   } catch (error) {
     console.error("Edge function error:", error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: error.message || "An unexpected error occurred",
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : "An unexpected error occurred",
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   }
 });
