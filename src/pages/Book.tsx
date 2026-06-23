@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CircleCheck as CheckCircle, Phone, MessageSquare, CreditCard, AlertCircle } from 'lucide-react';
+import { CircleCheck as CheckCircle, Phone, MessageSquare, CreditCard, CircleAlert as AlertCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Textarea } from '../components/Textarea';
@@ -115,27 +115,35 @@ export function Book() {
   };
 
   const createOrder = async (serviceId: string) => {
-    const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=create-order`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          serviceId,
-          receipt: `booking_${Date.now()}`,
-        }),
+    try {
+      console.log('Creating order for service:', serviceId);
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=create-order`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            serviceId,
+            receipt: `booking_${Date.now()}`,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log('Order creation response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create order');
       }
-    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to create order');
+      return data;
+    } catch (err) {
+      console.error('Order creation error:', err);
+      throw err;
     }
-
-    return response.json();
   };
 
   const verifyPayment = async (
@@ -144,24 +152,31 @@ export function Book() {
     signature: string,
     bookingId: string
   ) => {
-    const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=verify-payment`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          razorpay_order_id: orderId,
-          razorpay_payment_id: paymentId,
-          razorpay_signature: signature,
-          bookingId,
-        }),
-      }
-    );
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-payment?action=verify-payment`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+            razorpay_signature: signature,
+            bookingId,
+          }),
+        }
+      );
 
-    return response.json();
+      const result = await response.json();
+      console.log('Payment verification result:', result);
+      return result;
+    } catch (err) {
+      console.error('Payment verification error:', err);
+      return { success: false, error: 'Network error during verification' };
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -213,16 +228,26 @@ export function Book() {
         handler: async (response) => {
           try {
             setIsSubmitting(true);
-            localStorage.removeItem('pending_booking'); // cleanup
+            console.log('Payment response received:', {
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
+              signatureLength: response.razorpay_signature?.length
+            });
+            localStorage.removeItem('pending_booking');
             const result = await verifyPayment(
               response.razorpay_payment_id,
               response.razorpay_order_id,
               response.razorpay_signature,
               bookingData.id
             );
-            if (result.success) setIsSuccess(true);
-            else setPaymentError(result.error || 'Payment verification failed');
+            console.log('Verification result:', result);
+            if (result.success) {
+              setIsSuccess(true);
+            } else {
+              setPaymentError(result.error || 'Payment verification failed');
+            }
           } catch (err) {
+            console.error('Handler error:', err);
             setPaymentError('Payment verification failed. Please contact support.');
           } finally {
             setIsSubmitting(false);
