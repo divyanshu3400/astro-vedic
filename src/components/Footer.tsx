@@ -110,18 +110,18 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-white/70">
                 <MapPin className="w-5 h-5 text-saffron shrink-0 mt-0.5" />
-                <span>123 Astrology Lane, Connaught Place, New Delhi - 110001</span>
+                <span>123 Astrology Lane, Varanasi, Uttar Pradesh - 221002</span>
               </li>
               <li className="flex items-center gap-3 text-white/70">
                 <Phone className="w-5 h-5 text-saffron shrink-0" />
-                <a href="tel:+919565901765" className="hover:text-saffron transition-colors">
-                  +91 95659 01765
+                <a href="tel:+918858271765" className="hover:text-saffron transition-colors">
+                  +91 88582 71765
                 </a>
               </li>
               <li className="flex items-center gap-3 text-white/70">
                 <Mail className="w-5 h-5 text-saffron shrink-0" />
-                <a href="mailto:info@talkacharya.com" className="hover:text-saffron transition-colors">
-                  info@talkacharya.com
+                <a href="mailto:info@jyotify.in" className="hover:text-saffron transition-colors">
+                  info@jyotify.in
                 </a>
               </li>
             </ul>
