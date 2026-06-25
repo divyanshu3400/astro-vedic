@@ -46,21 +46,15 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <motion.div
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
-                className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center"
-              >
-                <img
-                  src="/logo.svg"
-                  alt="Jyotify Logo"
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-              <span className="font-serif text-xl font-bold text-gray-900 dark:text-white">
-                Jyotify
-              </span>
+            <Link to="/" className="flex items-center">
+              <motion.img
+                src="/jyotify-logo.png"
+                alt="Jyotify"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.25 }}
+                className="h-12 w-auto object-contain"
+                style={{ filter: 'drop-shadow(0 0 8px rgba(245,158,11,0.35))' }}
+              />
             </Link>
 
             <div className="hidden md:flex items-center gap-8">

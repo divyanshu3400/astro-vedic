@@ -157,14 +157,9 @@ export function Footer() {
           {/* Col 1 — Brand */}
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0 }}>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-full flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #F59E0B, #FCD34D)' }}>
-                <span className="text-deep-blue font-bold text-xl font-serif">ज</span>
-              </div>
-              <div>
-                <span className="font-serif text-xl font-bold text-white block leading-none">Jyotify</span>
-                <span className="text-saffron/70 text-[10px] tracking-widest">VEDIC WISDOM</span>
-              </div>
+              <img src="/jyotify-logo.png" alt="Jyotify"
+                className="h-14 w-auto object-contain"
+                style={{ filter: 'drop-shadow(0 0 10px rgba(245,158,11,0.4))' }} />
             </div>
 
             <p className="text-white/65 text-sm leading-relaxed mb-5">
