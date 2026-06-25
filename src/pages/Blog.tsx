@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, ArrowLeft, Clock, User, AlertCircle } from 'lucide-react';
+import { Search, CircleAlert as AlertCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { BlogCard } from '../components/BlogCard';
-import { Modal } from '../components/Modal';
+import { BlogModal } from '../components/BlogModal';
 import { Loading } from '../components/Loading';
 import { useBlogs } from '../hooks/useDynamicData';
 import type { BlogPost } from '../types';
-import { formatDate } from '../utils/helpers';
 
 export function Blog() {
   const { blogs, loading, error } = useBlogs();
@@ -77,9 +76,7 @@ export function Blog() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {paginatedBlogs.map((blog, index) => (
-                  <div key={blog.id} onClick={() => setSelectedBlog(blog)} className="cursor-pointer">
-                    <BlogCard blog={blog} index={index} />
-                  </div>
+                  <BlogCard key={blog.id} blog={blog} index={index} onClick={() => setSelectedBlog(blog)} />
                 ))}
               </div>
 
@@ -128,45 +125,7 @@ export function Blog() {
         </div>
       </section>
 
-      <Modal
-        isOpen={!!selectedBlog}
-        onClose={() => setSelectedBlog(null)}
-        title={selectedBlog?.title}
-      >
-        {selectedBlog && (
-          <div>
-            <img
-              src={selectedBlog.image}
-              alt={selectedBlog.title}
-              className="w-full h-48 object-cover rounded-xl mb-6"
-            />
-            <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-              <div className="flex items-center gap-1">
-                <User className="w-4 h-4" />
-                {selectedBlog.author}
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                {selectedBlog.readTime}
-              </div>
-              <span>{formatDate(selectedBlog.date)}</span>
-            </div>
-            <div className="prose dark:prose-invert max-w-none">
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                {selectedBlog.content || selectedBlog.excerpt}
-              </p>
-            </div>
-            <Button
-              variant="primary"
-              className="w-full mt-6"
-              onClick={() => setSelectedBlog(null)}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Articles
-            </Button>
-          </div>
-        )}
-      </Modal>
+      <BlogModal blog={selectedBlog} onClose={() => setSelectedBlog(null)} />
     </div>
   );
 }

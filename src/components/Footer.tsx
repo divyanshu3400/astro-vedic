@@ -48,14 +48,14 @@ export function Footer() {
                 transition={{ duration: 0.5 }}
                 className="w-10 h-10 bg-gradient-to-r from-saffron to-gold rounded-full flex items-center justify-center"
               >
-                <span className="text-deep-blue font-bold text-xl">A</span>
+                <span className="text-deep-blue font-bold text-xl">J</span>
               </motion.div>
               <span className="font-serif text-xl font-bold">
-                AstroVedic
+                Jyotify
               </span>
             </div>
             <p className="text-white/70 mb-6">
-              Guiding souls through the ancient wisdom of Vedic astrology. Discover your destiny, overcome obstacles, and achieve spiritual growth.
+              Your trusted destination for Vedic astrology services. Discover your destiny with expert Kundli analysis, matchmaking, and spiritual guidance.
             </p>
             <div className="flex gap-3">
               {socialLinks.map(({ icon: Icon, href, label }) => (
@@ -156,7 +156,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/60 text-sm">
-            &copy; {new Date().getFullYear()} AstroVedic. All rights reserved.
+            &copy; {new Date().getFullYear()} Jyotify. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm text-white/60">
             <a href="#" className="hover:text-saffron transition-colors">Privacy Policy</a>

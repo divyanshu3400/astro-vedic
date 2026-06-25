@@ -54,12 +54,12 @@ export function Navbar() {
               >
                 <img
                   src="/logo.svg"
-                  alt="Talk Acharya Ji Logo"
+                  alt="Jyotify Logo"
                   className="w-full h-full object-cover"
                 />
               </motion.div>
               <span className="font-serif text-xl font-bold text-gray-900 dark:text-white">
-                AstroVedic
+                Jyotify
               </span>
             </Link>
 

@@ -1,13 +1,16 @@
 import { motion } from 'framer-motion';
-import { Search, AlertCircle } from 'lucide-react';
+import { Search, CircleAlert as AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { ServiceCard } from '../components/ServiceCard';
+import { ServiceModal } from '../components/ServiceModal';
 import { Loading } from '../components/Loading';
 import { useServices } from '../hooks/useDynamicData';
+import type { Service } from '../types';
 
 export function Services() {
   const { services, loading, error } = useServices();
   const [search, setSearch] = useState('');
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const filteredServices = services.filter(service => {
     const matchesSearch = service.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -60,7 +63,12 @@ export function Services() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredServices.map((service, index) => (
-                  <ServiceCard key={service.id} service={service} index={index} />
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    index={index}
+                    onClick={() => setSelectedService(service)}
+                  />
                 ))}
               </div>
 
@@ -75,6 +83,11 @@ export function Services() {
           )}
         </div>
       </section>
+
+      <ServiceModal
+        service={selectedService}
+        onClose={() => setSelectedService(null)}
+      />
     </div>
   );
 }

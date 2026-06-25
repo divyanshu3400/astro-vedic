@@ -11,9 +11,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 interface ServiceCardProps {
   service: Service;
   index: number;
+  onClick: () => void;
 }
 
-export function ServiceCard({ service, index }: ServiceCardProps) {
+export function ServiceCard({ service, index, onClick }: ServiceCardProps) {
   const { ref, isInView } = useInView(0.1);
   const Icon = iconMap[service.icon] || Sparkles;
 
@@ -24,7 +25,8 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ y: -10 }}
-      className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
+      onClick={onClick}
+      className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
     >
       <div className="relative h-48 overflow-hidden">
         <img
@@ -63,7 +65,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
           ))}
         </div>
 
-        <Button variant="ghost" size="sm" className="group-hover:text-saffron">
+        <Button variant="ghost" size="sm" className="group-hover:text-saffron" onClick={(e) => { e.stopPropagation(); onClick(); }}>
           Learn More
           <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
         </Button>

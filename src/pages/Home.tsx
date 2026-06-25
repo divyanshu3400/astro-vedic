@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, Sparkles, Calendar, Moon as MoonIcon, AlertCircle } from 'lucide-react';
+import { ArrowRight, Star, Sparkles, Calendar, Moon as MoonIcon, CircleAlert as AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Button } from '../components/Button';
 import { SectionTitle } from '../components/SectionTitle';
 import { ServiceCard } from '../components/ServiceCard';
+import { ServiceModal } from '../components/ServiceModal';
 import { TestimonialCard } from '../components/TestimonialCard';
 import { BlogCard } from '../components/BlogCard';
+import { BlogModal } from '../components/BlogModal';
 import StarField from '../components/StarField';
 import { Loading } from '../components/Loading';
 import {
@@ -16,6 +19,7 @@ import {
   useDailyHoroscopes,
   useFestivals
 } from '../hooks/useDynamicData';
+import type { Service, BlogPost } from '../types';
 
 export function Home() {
   const navigate = useNavigate();
@@ -25,6 +29,8 @@ export function Home() {
   const { signs: zodiacSigns, loading: zodiacLoading } = useZodiacSigns();
   const { horoscopes: dailyHoroscopes, loading: horoscopesLoading } = useDailyHoroscopes();
   const { festivals, loading: festivalsLoading } = useFestivals();
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
 
   const todayPanchang = {
     tithi: 'Shukla Paksha, Dashami',
@@ -158,7 +164,7 @@ export function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {services.slice(0, 6).map((service, index) => (
-                  <ServiceCard key={service.id} service={service} index={index} />
+                  <ServiceCard key={service.id} service={service} index={index} onClick={() => setSelectedService(service)} />
                 ))}
               </div>
 
@@ -363,7 +369,7 @@ export function Home() {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {blogs.slice(0, 4).map((blog, index) => (
-                      <BlogCard key={blog.id} blog={blog} index={index} />
+                      <BlogCard key={blog.id} blog={blog} index={index} onClick={() => setSelectedBlog(blog)} />
                     ))}
                   </div>
 
@@ -410,6 +416,9 @@ export function Home() {
           </motion.div>
         </div>
       </section>
+
+      <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />
+      <BlogModal blog={selectedBlog} onClose={() => setSelectedBlog(null)} />
     </div>
   );
 }
