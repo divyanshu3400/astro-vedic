@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CircleCheck as CheckCircle, Phone, MessageSquare, CreditCard, CircleAlert as AlertCircle } from 'lucide-react';
 import { Button } from '../components/Button';
@@ -7,6 +8,7 @@ import { Textarea } from '../components/Textarea';
 import { useServices } from '../hooks/useDynamicData';
 import { supabase } from '../lib/supabase';
 import { Loading } from '../components/Loading';
+import { CONTACT } from '../lib/config';
 
 declare global {
   interface Window {
@@ -43,7 +45,10 @@ interface RazorpayOptions {
 }
 
 export function Book() {
+  const [searchParams] = useSearchParams();
   const { services, loading: servicesLoading, error: servicesError } = useServices();
+  const preselectedService = searchParams.get('service') ?? '';
+  const preselectedApplied = useRef(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -68,6 +73,19 @@ export function Book() {
     script.onerror = () => console.error('Failed to load Razorpay script');
     document.body.appendChild(script);
   }, []);
+
+  // Pre-select service from URL param once services are loaded
+  useEffect(() => {
+    if (preselectedApplied.current) return;
+    if (!preselectedService || services.length === 0) return;
+    const match = services.find(
+      s => s.title.toLowerCase() === decodeURIComponent(preselectedService).toLowerCase()
+    );
+    if (match) {
+      setFormData(prev => ({ ...prev, consultationType: match.title }));
+      preselectedApplied.current = true;
+    }
+  }, [preselectedService, services]);
 
   useEffect(() => {
     const pending = localStorage.getItem('pending_booking');
@@ -221,7 +239,7 @@ export function Book() {
         key: orderData.key_id,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'AstroVedic Consultation',
+        name: CONTACT.businessName,
         description: `${selectedService.title} - ${selectedService.duration}`,
         order_id: orderData.order_id,
 
@@ -575,11 +593,11 @@ export function Book() {
                   Contact us directly for immediate assistance
                 </p>
                 <div className="space-y-3">
-                  <a href="tel:+919876543210" className="flex items-center gap-3 text-sm hover:opacity-80">
+                  <a href={`tel:${CONTACT.phone}`} className="flex items-center gap-3 text-sm hover:opacity-80">
                     <Phone className="w-4 h-4" />
-                    +91 98765 43210
+                    {CONTACT.phoneDisplay}
                   </a>
-                  <a href="https://wa.me/919876543210" className="flex items-center gap-3 text-sm hover:opacity-80">
+                  <a href={`https://wa.me/${CONTACT.whatsapp}`} className="flex items-center gap-3 text-sm hover:opacity-80">
                     <MessageSquare className="w-4 h-4" />
                     WhatsApp Us
                   </a>
@@ -596,11 +614,11 @@ export function Book() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-white/70">Monday - Saturday</span>
-                    <span>9:00 AM - 8:00 PM</span>
+                    <span>{CONTACT.hoursWeekday}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/70">Sunday</span>
-                    <span>10:00 AM - 6:00 PM</span>
+                    <span>{CONTACT.hoursSunday}</span>
                   </div>
                 </div>
               </motion.div>

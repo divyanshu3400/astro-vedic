@@ -6,6 +6,7 @@ import { Input } from '../components/Input';
 import { Textarea } from '../components/Textarea';
 import { Card } from '../components/Card';
 import { supabase } from '../lib/supabase';
+import { CONTACT } from '../lib/config';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -76,9 +77,7 @@ export function Contact() {
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Visit Us</h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    123 Astrology Lane<br />
-                    Connaught Place<br />
-                    New Delhi - 110001
+                    {CONTACT.address}
                   </p>
                 </div>
               </div>
@@ -97,13 +96,17 @@ export function Contact() {
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Call Us</h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    <a href="tel:+919565901765" className="hover:text-saffron transition-colors">
-                      +91 95659 01765
+                    <a href={`tel:${CONTACT.phone}`} className="hover:text-saffron transition-colors">
+                      {CONTACT.phoneDisplay}
                     </a>
-                    <br />
-                    <a href="tel:+911234567890" className="hover:text-saffron transition-colors">
-                      +91 12345 67890
-                    </a>
+                    {CONTACT.phoneSecondary && (
+                      <>
+                        <br />
+                        <a href={`tel:${CONTACT.phoneSecondary}`} className="hover:text-saffron transition-colors">
+                          {CONTACT.phoneSecondaryDisplay}
+                        </a>
+                      </>
+                    )}
                   </p>
                 </div>
               </div>
@@ -122,8 +125,8 @@ export function Contact() {
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Working Hours</h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Mon - Sat: 9:00 AM - 8:00 PM<br />
-                    Sunday: 10:00 AM - 6:00 PM
+                    Mon - Sat: {CONTACT.hoursWeekday}<br />
+                    Sunday: {CONTACT.hoursSunday}
                   </p>
                 </div>
               </div>
@@ -138,7 +141,7 @@ export function Contact() {
             >
               <div className="h-64 bg-gray-200 dark:bg-gray-700 relative">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.5065841707535!2d77.2130!3d28.6328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDM3JzU4LjAiTiA3N8KwMTInNDYuOCJF!5e0!3m2!1sen!2sin!4v1234567890"
+                  src={CONTACT.mapEmbed}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -246,7 +249,7 @@ export function Contact() {
             className="mt-12"
           >
             <a
-              href="https://wa.me/919565901765"
+              href={`https://wa.me/${CONTACT.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 w-full md:w-auto bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-semibold transition-colors"

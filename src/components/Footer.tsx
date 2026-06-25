@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Send, Globe } from 'lucide-react';
 import { useState } from 'react';
+import { CONTACT } from '../lib/config';
 
 const quickLinks = [
   { name: 'Home', path: '/' },
@@ -110,18 +111,18 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-white/70">
                 <MapPin className="w-5 h-5 text-saffron shrink-0 mt-0.5" />
-                <span>123 Astrology Lane, Varanasi, Uttar Pradesh - 221002</span>
+                <span>{CONTACT.address}</span>
               </li>
               <li className="flex items-center gap-3 text-white/70">
                 <Phone className="w-5 h-5 text-saffron shrink-0" />
-                <a href="tel:+918858271765" className="hover:text-saffron transition-colors">
-                  +91 88582 71765
+                <a href={`tel:${CONTACT.phone}`} className="hover:text-saffron transition-colors">
+                  {CONTACT.phoneDisplay}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-white/70">
                 <Mail className="w-5 h-5 text-saffron shrink-0" />
-                <a href="mailto:info@jyotify.in" className="hover:text-saffron transition-colors">
-                  info@jyotify.in
+                <a href={`mailto:${CONTACT.email}`} className="hover:text-saffron transition-colors">
+                  {CONTACT.email}
                 </a>
               </li>
             </ul>

@@ -120,7 +120,7 @@ export function ServiceModal({ service, onClose }: ServiceModalProps) {
                 className="flex-1"
                 onClick={() => {
                   onClose();
-                  navigate('/book');
+                  navigate(`/book?service=${encodeURIComponent(service.title)}`);
                 }}
               >
                 Book Now
