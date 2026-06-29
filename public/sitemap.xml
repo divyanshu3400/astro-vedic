@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+
+  <!-- ═══════════════════════════════════════════════
+       CORE PAGES
+  ════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://jyotify.in/</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://jyotify.in/" />
+    <image:image>
+      <image:loc>https://jyotify.in/og-image.jpg</image:loc>
+      <image:title>Jyotify - Vedic Astrology Consultation</image:title>
+      <image:caption>Expert Vedic Astrology by Jyotify - Kundli, Horoscope, Puja Online</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/about</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/about" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/about" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/contact</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/contact" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/contact" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/book</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/book" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/book" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/testimonials</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/blog" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/blog" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/privacy-policy</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/terms</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════
+       SERVICES — HIGH PRIORITY (money pages)
+  ════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://jyotify.in/services</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services" />
+    <image:image>
+      <image:loc>https://jyotify.in/images/services-banner.jpg</image:loc>
+      <image:title>Jyotify Vedic Astrology Services</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/kundli-analysis</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services/kundli-analysis" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services/kundli-analysis" />
+    <image:image>
+      <image:loc>https://jyotify.in/images/kundli-analysis.jpg</image:loc>
+      <image:title>Kundli Analysis - Janam Patri Vishleshan</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/kundli-matching</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services/kundli-matching" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services/kundli-matching" />
+    <image:image>
+      <image:loc>https://jyotify.in/images/kundli-matching.jpg</image:loc>
+      <image:title>Kundli Matching - Vivah Milan</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/daily-rashifal</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services/daily-rashifal" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services/daily-rashifal" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/vastu-consultation</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services/vastu-consultation" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services/vastu-consultation" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/numerology</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services/numerology" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services/numerology" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/gemstone-consultation</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services/gemstone-consultation" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services/gemstone-consultation" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/online-puja</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/services/online-puja" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/services/online-puja" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/marriage-prediction</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/career-astrology</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/health-astrology</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/services/shanti-puja</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════
+       HOROSCOPE — HIGH TRAFFIC PAGES
+  ════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://jyotify.in/horoscope</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.92</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/horoscope" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/horoscope" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/aries</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/taurus</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/gemini</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/cancer</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/leo</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/virgo</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/libra</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/scorpio</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/sagittarius</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/capricorn</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/aquarius</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/horoscope/pisces</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Weekly horoscopes -->
+  <url>
+    <loc>https://jyotify.in/horoscope/weekly</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.82</priority>
+  </url>
+
+  <!-- Monthly horoscopes -->
+  <url>
+    <loc>https://jyotify.in/horoscope/monthly</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
+  </url>
+
+  <!-- Yearly horoscope 2025 -->
+  <url>
+    <loc>https://jyotify.in/horoscope/yearly/2025</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════
+       RASHIFAL (Hindi — separate high-traffic URLs)
+  ════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://jyotify.in/rashifal</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.92</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/rashifal" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/aaj-ka</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/mesh</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/vrishabh</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/mithun</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/kark</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/singh</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/kanya</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/tula</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/vrishchik</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/dhanu</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/makar</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/kumbh</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/rashifal/meen</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.83</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════
+       KUNDLI TOOLS
+  ════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://jyotify.in/kundli</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/kundli" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/kundli" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/kundli/free-kundli</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/kundli/free-kundli" />
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://jyotify.in/en/kundli/free-kundli" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/kundli/kundli-matching</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/kundli/janam-patri</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════
+       PANCHANG
+  ════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://jyotify.in/panchang</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/panchang/aaj-ka-panchang</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.88</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/panchang/festivals-2025</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/panchang/muhurat</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.82</priority>
+  </url>
+
+  <!-- ═══════════════════════════════════════════════
+       BLOG POSTS — add your actual slugs here
+  ════════════════════════════════════════════════ -->
+
+  <url>
+    <loc>https://jyotify.in/blog/vedic-astrology-kya-hai</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://jyotify.in/blog/vedic-astrology-kya-hai" />
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog/kundli-matching-guide</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog/best-gemstone-for-your-rashi</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog/vastu-tips-for-home</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog/saturn-transit-2025</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog/rahu-ketu-effects</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog/navratri-puja-vidhi</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+
+  <url>
+    <loc>https://jyotify.in/blog/numerology-life-path-number</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+
+</urlset>
