@@ -166,13 +166,25 @@
     ]
   }
   </script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ8WPGGCLD"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-RJ8WPGGCLD');
+    function loadGTM() {
+      if (window._gtmLoaded) return;
+      window._gtmLoaded = true;
+      var s = document.createElement('script');
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RJ8WPGGCLD';
+      s.async = true;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-RJ8WPGGCLD');
+    }
+    // Load after first user interaction or 4s — whichever comes first
+    ['scroll', 'mousemove', 'keydown', 'touchstart', 'click'].forEach(function (e) {
+      window.addEventListener(e, loadGTM, { once: true, passive: true });
+    });
+    setTimeout(loadGTM, 4000);
   </script>
 </head>
 

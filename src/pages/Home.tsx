@@ -41,7 +41,7 @@ export function Home() {
 
   const isLoading = servicesLoading || testimonialsLoading || blogsLoading || zodiacLoading || horoscopesLoading || festivalsLoading;
 
-  const zodiacGlyphs = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+  const zodiacGlyphs = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
 
   return (
     <div className="overflow-hidden">
@@ -54,19 +54,28 @@ export function Home() {
         {/* Nebula blobs */}
         <motion.div
           className="absolute top-[-10%] left-[-5%] w-[700px] h-[700px] rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(67,56,202,0.18) 0%, transparent 70%)' }}
+          style={{
+            willChange: 'transform, opacity',  // ← add this
+            transform: 'translateZ(0)', background: 'radial-gradient(circle, rgba(67,56,202,0.18) 0%, transparent 70%)'
+          }}
           animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
           transition={{ duration: 8, repeat: Infinity }}
         />
         <motion.div
           className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)' }}
+          style={{
+            background: 'radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)', willChange: 'transform, opacity',  // ← add this
+            transform: 'translateZ(0)',
+          }}
           animate={{ scale: [1.1, 1, 1.1], opacity: [0.5, 0.9, 0.5] }}
           transition={{ duration: 10, repeat: Infinity }}
         />
         <motion.div
           className="absolute top-1/2 left-[30%] w-[500px] h-[500px] rounded-full -translate-y-1/2"
-          style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%)' }}
+          style={{
+            background: 'radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%)', willChange: 'transform, opacity',  // ← add this
+            transform: 'translateZ(0)',
+          }}
           animate={{ opacity: [0.4, 0.8, 0.4] }}
           transition={{ duration: 6, repeat: Infinity }}
         />
@@ -176,7 +185,7 @@ export function Home() {
               transition={{ duration: 0.7, delay: 0.45 }}
               className="text-white/60 text-base md:text-lg leading-relaxed mb-8 max-w-lg"
             >
-              Expert Vedic astrology, Kundli analysis, and spiritual guidance — 
+              Expert Vedic astrology, Kundli analysis, and spiritual guidance —
               personalized to your birth chart. Trusted by 50,000+ seekers across 30 countries.
             </motion.p>
 
@@ -230,7 +239,7 @@ export function Home() {
               className="flex items-center gap-4"
             >
               <div className="flex -space-x-2">
-                {['👨‍💼','👩‍🦱','🧑‍🦳','👩','👨‍🦲'].map((emoji, i) => (
+                {['👨‍💼', '👩‍🦱', '🧑‍🦳', '👩', '👨‍🦲'].map((emoji, i) => (
                   <div
                     key={i}
                     className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm"
@@ -306,7 +315,7 @@ export function Home() {
               <g className="spin-reverse" style={{ transformOrigin: '250px 250px' }}>
                 <circle cx="250" cy="250" r="190" fill="none" stroke="rgba(167,139,250,0.2)" strokeWidth="1" strokeDasharray="4 8" />
                 {/* 8 planet markers */}
-                {['☉','☽','♂','♃','♄','♀','☿','⬆'].map((planet, i) => {
+                {['☉', '☽', '♂', '♃', '♄', '♀', '☿', '⬆'].map((planet, i) => {
                   const angle = (i * 45 - 90) * (Math.PI / 180);
                   const x = 250 + 172 * Math.cos(angle);
                   const y = 250 + 172 * Math.sin(angle);
