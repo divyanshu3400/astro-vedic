@@ -11,6 +11,7 @@ import {
 import { TestimonialCard } from "../components/TestimonialCard";
 import { Loading } from "../components/Loading";
 import { useTestimonials } from "../hooks/useDynamicData";
+import { CONTACT } from '../lib/config';
 
 const COSMOS = "#06040f";
 const COSMOS_MID = "#0a0618";
@@ -467,7 +468,7 @@ export function Testimonials() {
                     inspire others.
                   </p>
                   <a
-                    href={`https://wa.me/919876543210`}
+                    href={`https://wa.me/${CONTACT.whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold transition-all hover:scale-105"
